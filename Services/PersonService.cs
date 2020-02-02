@@ -3,7 +3,7 @@ using dotnet_test.Controllers;
 
 namespace dotnet_test.Services
 {
-    public class PersonService
+    public class PersonService : IPersonService
     {
         public IEnumerable<Person> GetAllPeople()
         {

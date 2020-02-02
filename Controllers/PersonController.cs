@@ -1,29 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using dotnet_test.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace dotnet_test.Controllers
 {
-    public class Person
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Age { get; set; }
-        public string Gender { get; set; }
-    }
-
     [ApiController]
     [Route("[controller]")]
     public class PersonController : ControllerBase
     {
         private readonly ILogger<PersonController> _logger;
-        private readonly PersonService _personService;
+        private readonly IPersonService _personService;
 
-        public PersonController(ILogger<PersonController> logger)
+        public PersonController(ILogger<PersonController> logger, IPersonService personService)
         {
             _logger = logger;
-            _personService = new PersonService();
+            _personService = personService;
         }
 
         [HttpGet]
@@ -36,5 +29,12 @@ namespace dotnet_test.Controllers
         // where the string is the first and last name
         // sorted by first name (a-z)
         // EXAMPLE: [ "Ash Ketchum", "Lieutenant Surge", ... ]
+        [HttpGet]
+        [Route("names")]
+        public IEnumerable<string> GetNames()
+        {
+            var people = _personService.GetAllPeople();
+            return people.OrderBy(p => p.FirstName).Select(p => $"{p.FirstName} {p.LastName}");
+        }
     }
 }
